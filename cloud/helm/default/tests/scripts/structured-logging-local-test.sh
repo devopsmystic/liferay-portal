@@ -21,6 +21,17 @@ readonly FIXTURES_DIR="${SCRIPT_DIR}/../fixtures"
 readonly WAIT_SECONDS="${1:-60}"
 readonly THRESHOLD_PERCENT=50
 
+# Set inside main(); referenced by the EXIT trap. Script-global so it stays
+# in scope after main() returns, when the trap actually fires.
+container=""
+
+cleanup() {
+	if [ -n "${container}" ]
+	then
+		docker rm -f "${container}" > /dev/null 2>&1 || true
+	fi
+}
+
 main() {
 	require_cmd curl docker jq sha256sum
 
@@ -49,9 +60,9 @@ main() {
 		echo "${sha256}  ${jar_path}" | sha256sum -c
 	fi
 
-	local container="liferay-structured-logging-test-$$"
+	container="liferay-structured-logging-test-$$"
 
-	trap 'docker rm -f "${container}" >/dev/null 2>&1 || true' EXIT
+	trap cleanup EXIT
 
 	echo "Starting Liferay (${container})..."
 
