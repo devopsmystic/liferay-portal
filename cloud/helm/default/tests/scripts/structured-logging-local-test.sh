@@ -72,7 +72,9 @@ main() {
 	local non_empty
 	local json_valid
 	non_empty=$(echo "${logs}" | grep -cv '^$' || true)
-	json_valid=$(echo "${logs}" | jq -R 'fromjson? | select(.severity? and .timestamp?)' 2>/dev/null | jq -s 'length')
+	# log4j2 path emits `severity` (cloud-native-layout.json); JUL/ECS path
+	# emits `log.level`. Both count as valid structured output for this test.
+	json_valid=$(echo "${logs}" | jq -R 'fromjson? | select((.severity? or .["log.level"]?) and (.timestamp? or .["@timestamp"]?))' 2>/dev/null | jq -s 'length')
 
 	if [ "${non_empty}" -eq 0 ]
 	then

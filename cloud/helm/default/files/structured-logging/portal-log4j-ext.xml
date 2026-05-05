@@ -3,7 +3,7 @@
 <Configuration strict="true">
 	<Appenders>
 		<Appender name="CONSOLE" target="SYSTEM_OUT" type="CompanyWebIdConsole">
-			<JsonTemplateLayout eventTemplateUri="file:///${env:LIFERAY_HOME}/tomcat/webapps/ROOT/WEB-INF/classes/META-INF/LXClayout.json" stackTraceEnabled="true" maxStringLength="131072"/>
+			<JsonTemplateLayout eventTemplateUri="file:///${env:LIFERAY_HOME}/tomcat/webapps/ROOT/WEB-INF/classes/META-INF/cloud-native-layout.json" stackTraceEnabled="true" maxStringLength="131072"/>
 		</Appender>
 
 		<Null name="TEXT_FILE" />
