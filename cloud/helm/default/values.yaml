@@ -165,6 +165,31 @@ customInitContainers:
                     volumeMounts:
                         -   mountPath: /temp
                             name: liferay-persistent-volume
+    x-liferay-structured-logging-jar-fetch:
+        -   containerTemplate: |
+                {{- if .structuredLogging.enabled }}
+                -   command:
+                        -   sh
+                        -   -c
+                        -   |
+                            JAR="jul-ecs-formatter-{{ .structuredLogging.julEcsFormatter.version }}.jar"
+                            curl -sSL "https://repo1.maven.org/maven2/co/elastic/logging/jul-ecs-formatter/{{ .structuredLogging.julEcsFormatter.version }}/${JAR}" -o "/structured-logging-jars/${JAR}"
+                            echo "{{ .structuredLogging.julEcsFormatter.sha256 }}  /structured-logging-jars/${JAR}" | sha256sum -c
+                    image: curlimages/curl:8.10.1
+                    name: liferay-structured-logging-jar-fetch
+                    securityContext:
+                        allowPrivilegeEscalation: false
+                        capabilities:
+                            drop:
+                                -   ALL
+                        runAsNonRoot: true
+                        runAsUser: 1000
+                        seccompProfile:
+                            type: RuntimeDefault
+                    volumeMounts:
+                        -   mountPath: /structured-logging-jars
+                            name: liferay-structured-logging-jars
+                {{- end }}
     x-liferay-wait-on-services:
         -   containerTemplate: |
                 -   command:
@@ -207,6 +232,13 @@ customVolumes:
                 defaultMode: 0755
                 name: liferay-init-scripts-default
             name: liferay-init-scripts-default
+    x-liferay-structured-logging:
+        -   configMap:
+                name: liferay-structured-logging
+                optional: true
+            name: liferay-structured-logging-configs
+        -   emptyDir: {}
+            name: liferay-structured-logging-jars
 dependencies: {}
 env:
     -   name: DNS_MEMBERSHIP_SERVICE_NAME
@@ -382,6 +414,11 @@ startupProbe:
     initialDelaySeconds: 60
     periodSeconds: 10
     timeoutSeconds: 5
+structuredLogging:
+    enabled: false
+    julEcsFormatter:
+        sha256: "TODO_PIN_AFTER_VERIFY"
+        version: "1.7.0"
 tolerations: []
 updateStrategy:
     type: RollingUpdate

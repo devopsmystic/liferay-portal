@@ -1,0 +1,13 @@
+{{- if .Values.structuredLogging.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: liferay-structured-logging
+data:
+    cloud-native-layout.json: |-
+{{ .Files.Get "files/structured-logging/cloud-native-layout.json" | indent 8 }}
+    logging.properties: |-
+{{ .Files.Get "files/structured-logging/logging.properties" | indent 8 }}
+    portal-log4j-ext.xml: |-
+{{ .Files.Get "files/structured-logging/portal-log4j-ext.xml" | indent 8 }}
+{{- end }}
