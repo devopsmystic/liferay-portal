@@ -3,7 +3,7 @@
 <Configuration strict="true">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
-			<JsonTemplateLayout eventTemplateUri="classpath:META-INF/cloud-native-layout.json" stackTraceEnabled="true" maxStringLength="131072"/>
+			<JsonTemplateLayout eventTemplateUri="classpath:META-INF/cloud-native-layout.json" maxStringLength="131072" stackTraceEnabled="true" />
 		</Console>
 
 		<Null name="TEXT_FILE" />

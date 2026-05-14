@@ -1,10 +1,10 @@
 {{- if .Values.structuredLogging.enabled }}
 apiVersion: v1
+data:
+    100-inject-structured-logging.sh: |-
 kind: ConfigMap
 metadata:
     name: liferay-structured-logging
-data:
-    100-inject-structured-logging.sh: |-
 {{ .Files.Get "files/structured-logging/100-inject-structured-logging.sh" | indent 8 }}
     cloud-native-layout.json: |-
 {{ .Files.Get "files/structured-logging/cloud-native-layout.json" | indent 8 }}
